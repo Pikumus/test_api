@@ -35,7 +35,7 @@ app.get('/api/universal', async (req, res) => {
 
 // Пример API для получения данных
 app.get('/api/ping', (req, res) => {
-    res.json('fsdl;fks');
+    res.json('pong');
 });
 
 app.listen(port, () => {
