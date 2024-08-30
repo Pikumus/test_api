@@ -34,8 +34,8 @@ app.get('/api/universal', async (req, res) => {
 });
 
 // Пример API для получения данных
-app.get('/api/ping', (req, res) => {
-    res.json('pong');
+app.get('/api/kirill', (req, res) => {
+    res.json('жопу побрил');
 });
 
 app.listen(port, () => {
