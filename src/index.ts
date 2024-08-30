@@ -34,15 +34,9 @@ app.get('/api/universal', async (req, res) => {
 });
 
 // Пример API для получения данных
-// app.get('/api/denis', (req, res) => {
-//     connection.query('SELECT * FROM users', (err, results) => {
-//         if (err) {
-//             res.status(500).send(err);
-//             return;
-//         }
-//         res.json(results);
-//     })
-// });
+app.get('/api/ping', (req, res) => {
+    res.json('pong');
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
