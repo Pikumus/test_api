@@ -1,33 +1,22 @@
 import express from 'express';
-import connection from './db';
-import connectToDatabase from "./db";
-
-const querystring = require('querystring');
-const url = require('url');
+import connectToDatabase from './db';
 
 const app = express();
 const port = 3000;
+
 app.use(express.json());
 
-
+// Эндпоинт для получения всех продуктов
 app.get('/api/products', async (req, res) => {
-    let parsedUrl = url.parse(req.url);
-    let parsedQs = querystring.parse(parsedUrl.query);
-    let query = parsedQs['query'];
-    const db = await connectToDatabase();
     try {
-        const rows = await db.all(query);
-        res.json(rows);
-    } catch (err) {
-        res.status(500).send(err);
-    } finally {
+        const db = await connectToDatabase();
+        const products = await db.all('SELECT * FROM products'); // Получение всех продуктов
         await db.close();
-    }
-});
 
-// Пример API для получения данных
-app.get('/api/kirill', (req, res) => {
-    res.json('жопу побрил');
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error'});
+    }
 });
 
 app.listen(port, () => {
