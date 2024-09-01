@@ -1,9 +1,11 @@
 import express from 'express';
 import connectToDatabase from './db';
+import cors from 'cors';
 
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 // Эндпоинт для получения всех продуктов
