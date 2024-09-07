@@ -12,7 +12,7 @@ app.use(express.json());
 app.get('/api/products', async (req, res) => {
     try {
         const db = await connectToDatabase();
-        const products = await db.all('SELECT * FROM users'); // Получение всех продуктов
+        const products = await db.all('SELECT * FROM products'); // Получение всех продуктов
         await db.close();
 
         res.json(products);
