@@ -43,9 +43,6 @@ app.post('/api/cart', async (req, res) => {
     if (!product_id) {
         return res.status(400).json({error: 'Invalid product ID'});
     }
-    if (quantity < 1) {
-        return res.status(400).json({error: 'Invalid quaintity'});
-    }
 
     try {
         const db = await connectToDatabase();
@@ -55,7 +52,7 @@ app.post('/api/cart', async (req, res) => {
 
         if (existingProduct) {
             // Если продукт уже в корзине, обновляем его количество
-            await db.run('UPDATE cart SET quantity = quantity + 1', [quantity, product_id]);
+            await db.run('UPDATE cart SET quantity = quantity + 1 WHERE product_id = ?', [product_id]);
         } else {
             // Если продукта нет в корзине, добавляем его
             await db.run('INSERT INTO cart (product_id, quantity) VALUES (?, ?)', [product_id, quantity]);
