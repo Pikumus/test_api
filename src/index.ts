@@ -37,8 +37,11 @@ app.get('/api/cart', async (req, res) => {
 app.post('/api/cart', async (req, res) => {
     const { product_id, quantity } = req.body;
 
-    if (!product_id || quantity < 1) {
-        return res.status(400).json({ error: 'Invalid product ID or quantity' });
+    if (!product_id) {
+        return res.status(400).json({ error: 'Invalid product ID' });
+    }
+    if(quantity < 1){
+        return res.status(400).json({ error: 'Invalid quaintity' });
     }
 
     try {
