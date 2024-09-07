@@ -24,8 +24,10 @@ app.get('/api/products', async (req, res) => {
 app.get('/api/cart', async (req, res) => {
     try {
         const db = await connectToDatabase();
-        const products = await db.all('SELECT * FROM cart');
+        const productsCart = await db.all('SELECT * FROM cart');
         await db.close();
+
+        res.json(productsCart);
     }
     catch (err) {
         res.status(500).json({error: 'Internal Server Error'});
