@@ -24,24 +24,27 @@ app.get('/api/products', async (req, res) => {
 app.get('/api/cart', async (req, res) => {
     try {
         const db = await connectToDatabase();
-        const productsCart = await db.all('SELECT * FROM cart');
+        const cartItems = await db.all(`
+            SELECT p.id, p.name, p.price, c.quantity 
+            FROM cart c
+            JOIN products p ON c.product_id = p.id
+        `);
         await db.close();
 
-        res.json(productsCart);
-    }
-    catch (err) {
-        res.status(500).json({error: 'Internal Server Error'});
+        res.json(cartItems);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
 app.post('/api/cart', async (req, res) => {
-    const { product_id, quantity } = req.body;
+    const {product_id, quantity} = req.body;
 
     if (!product_id) {
-        return res.status(400).json({ error: 'Invalid product ID' });
+        return res.status(400).json({error: 'Invalid product ID'});
     }
-    if(quantity < 1){
-        return res.status(400).json({ error: 'Invalid quaintity' });
+    if (quantity < 1) {
+        return res.status(400).json({error: 'Invalid quaintity'});
     }
 
     try {
@@ -52,16 +55,16 @@ app.post('/api/cart', async (req, res) => {
 
         if (existingProduct) {
             // Если продукт уже в корзине, обновляем его количество
-            await db.run('UPDATE cart SET quantity = quantity + ? WHERE product_id = ?', [quantity, product_id]);
+            await db.run('UPDATE cart SET quantity = quantity + 1 WHERE product_id = ?', [quantity, product_id]);
         } else {
             // Если продукта нет в корзине, добавляем его
             await db.run('INSERT INTO cart (product_id, quantity) VALUES (?, ?)', [product_id, quantity]);
         }
 
         await db.close();
-        res.status(200).json({ message: 'Product added to cart successfully' });
+        res.status(200).json({message: 'Product added to cart successfully'});
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({error: 'Internal Server Error'});
     }
 });
 
