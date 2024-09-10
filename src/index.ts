@@ -65,7 +65,7 @@ app.post('/api/cart', async (req, res) => {
     }
 });
 
-app.delete('/api/cart', async (req, res) => {
+app.put('/api/cart/decrement', async (req, res) => {
     const {product_id} = req.body;
 
     if (!product_id) {
@@ -78,8 +78,15 @@ app.delete('/api/cart', async (req, res) => {
         const existingProduct = await db.get('SELECT * FROM cart WHERE product_id = ?', [product_id]);
 
         if (existingProduct) {
-            await db.run('DELETE FROM cart WHERE product_id = ?', [product_id]);
-            res.status(200).json({message: 'Product removed from cart successfully'});
+            // Если количество больше 1, уменьшаем количество
+            if (existingProduct.quantity > 1) {
+                await db.run('UPDATE cart SET quantity = quantity - 1 WHERE product_id = ?', [product_id]);
+                res.status(200).json({message: 'Quantity decreased successfully'});
+            } else {
+                // Если количество равно 1, удаляем продукт из корзины
+                await db.run('DELETE FROM cart WHERE product_id = ?', [product_id]);
+                res.status(200).json({message: 'Product removed from cart successfully'});
+            }
         } else {
             res.status(404).json({error: 'Product not found in cart'});
         }
