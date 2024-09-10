@@ -33,7 +33,7 @@ app.get('/api/cart', async (req, res) => {
 
         res.json(cartItems);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({error: 'Internal Server Error'});
     }
 });
 
@@ -52,7 +52,7 @@ app.post('/api/cart', async (req, res) => {
 
         if (existingProduct) {
             // Если продукт уже в корзине, обновляем его количество
-            await db.run('UPDATE cart SET quantity = quantity + 1 WHERE product_id = ?', [product_id]);
+            await db.run('UPDATE cart SET quantity = quantity + ? WHERE product_id = ?', [quantity, product_id]);
         } else {
             // Если продукта нет в корзине, добавляем его
             await db.run('INSERT INTO cart (product_id, quantity) VALUES (?, ?)', [product_id, quantity]);
@@ -65,6 +65,30 @@ app.post('/api/cart', async (req, res) => {
     }
 });
 
+app.delete('/api/cart', async (req, res) => {
+    const {product_id} = req.body;
+
+    if (!product_id) {
+        return res.status(400).json({error: 'Invalid product ID'});
+    }
+
+    try {
+        const db = await connectToDatabase();
+
+        const existingProduct = await db.get('SELECT * FROM cart WHERE product_id = ?', [product_id]);
+
+        if (existingProduct) {
+            await db.run('DELETE FROM cart WHERE product_id = ?', [product_id]);
+            res.status(200).json({message: 'Product removed from cart successfully'});
+        } else {
+            res.status(404).json({error: 'Product not found in cart'});
+        }
+
+        await db.close();
+    } catch (err) {
+        res.status(500).json({error: 'Internal Server Error'});
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
