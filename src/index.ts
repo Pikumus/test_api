@@ -25,7 +25,7 @@ app.get('/api/cart', async (req, res) => {
     try {
         const db = await connectToDatabase();
         const cartItems = await db.all(`
-            SELECT p.id, p.name, p.price, p.image, c.quantity,
+            SELECT p.id, p.name, p.price, p.image, c.quantity
             FROM cart c
             JOIN products p ON c.product_id = p.id
         `);
