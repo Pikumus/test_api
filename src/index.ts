@@ -65,7 +65,7 @@ app.post('/api/cart', async (req, res) => {
     }
 });
 
-app.put('/api/cart/decrement', async (req, res) => {
+app.put('/api/cart', async (req, res) => {
     const {product_id} = req.body;
 
     if (!product_id) {
