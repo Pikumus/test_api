@@ -52,7 +52,7 @@ app.post('/api/cart', async (req, res) => {
 
         if (existingProduct) {
             // Если продукт уже в корзине, обновляем его количество
-            await db.run('UPDATE cart SET quantity = quantity + ? WHERE product_id = ?', [quantity, product_id]);
+            await db.run('UPDATE cart SET quantity = quantity + 1 WHERE product_id = ?', [quantity, product_id]);
         } else {
             // Если продукта нет в корзине, добавляем его
             await db.run('INSERT INTO cart (product_id, quantity) VALUES (?, ?)', [product_id, quantity]);
